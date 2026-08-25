@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Northstar Market | Curated everyday goods</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+		:root {
+			--ink: #1e2928;
+			--muted: #687674;
+			--paper: #f7f6f1;
+			--surface: #ffffff;
+			--line: #e4e8e1;
+			--leaf: #2f6b57;
+			--leaf-dark: #20483b;
+			--sun: #e7b85a;
+			--coral: #d9785d;
+			--shadow: 0 18px 50px rgba(35, 60, 51, 0.09);
+		}
+
+		* { box-sizing: border-box; }
+		body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; }
+		button, input, select { font: inherit; }
+		button { cursor: pointer; }
+		.page-shell { max-width: 1440px; margin: auto; padding: 0 5vw 4rem; }
+		header { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; border-bottom: 1px solid var(--line); }
+		.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: .02em; }
+		.brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--leaf); color: white; font-family: Georgia, serif; font-size: 21px; }
+		.cart-button { border: 1px solid var(--ink); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 17px; transition: .2s ease; }
+		.cart-button:hover { background: var(--ink); color: white; }
+		.cart-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 5px; padding: 0 5px; border-radius: 99px; background: var(--sun); color: var(--ink); font-size: 12px; font-weight: 700; }
+
+		.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 3rem; align-items: end; padding: 72px 0 52px; }
+		.eyebrow { margin: 0 0 14px; color: var(--coral); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+		h1 { max-width: 760px; margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: clamp(48px, 7vw, 94px); line-height: .94; letter-spacing: -.04em; }
+		.hero-copy { max-width: 340px; margin: 0 0 5px; color: var(--muted); line-height: 1.65; }
+		.toolbar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; margin-bottom: 30px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+		.categories { display: flex; flex-wrap: wrap; gap: 8px; }
+		.category { border: 0; background: transparent; color: var(--muted); padding: 9px 14px; border-radius: 999px; text-transform: capitalize; transition: .2s ease; }
+		.category:hover, .category.active { background: var(--leaf); color: white; }
+		.controls { display: flex; gap: 10px; }
+		.search, .sort { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 10px 12px; outline: none; }
+		.search { width: min(220px, 42vw); }
+		.search:focus, .sort:focus { border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(47, 107, 87, .12); }
+		.catalog-meta { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+		.catalog-meta h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: 30px; }
+		#result-count { color: var(--muted); font-size: 13px; }
+		.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+		.product-card { display: flex; min-width: 0; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; transition: transform .25s ease, box-shadow .25s ease; animation: rise .45s both; }
+		.product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+		.image-wrap { height: 260px; display: grid; place-items: center; padding: 26px; background: #f0f2ed; }
+		.image-wrap img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+		.product-info { display: flex; flex: 1; flex-direction: column; padding: 17px; }
+		.product-category { margin: 0 0 8px; color: var(--coral); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+		.product-title { display: -webkit-box; min-height: 44px; margin: 0 0 14px; overflow: hidden; color: var(--ink); font-size: 15px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+		.product-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+		.price { font-size: 18px; font-weight: 700; }
+		.rating { color: #a8771c; font-size: 12px; white-space: nowrap; }
+		.view-button { width: 100%; margin-top: 15px; border: 0; background: var(--leaf-dark); color: white; border-radius: 6px; padding: 11px; font-weight: 600; }
+		.view-button:hover { background: var(--leaf); }
+		.status { grid-column: 1 / -1; padding: 70px 20px; color: var(--muted); text-align: center; }
+		.spinner { width: 28px; height: 28px; margin: 0 auto 15px; border: 3px solid var(--line); border-top-color: var(--leaf); border-radius: 50%; animation: spin .8s linear infinite; }
+
+		dialog { width: min(680px, calc(100% - 28px)); padding: 0; border: 0; border-radius: 12px; box-shadow: 0 30px 90px rgba(21, 41, 35, .25); }
+		dialog::backdrop { background: rgba(24, 39, 35, .5); backdrop-filter: blur(3px); }
+		.modal-content { display: grid; grid-template-columns: .85fr 1.15fr; min-height: 390px; }
+		.modal-image { display: grid; place-items: center; padding: 35px; background: #f0f2ed; }
+		.modal-image img { width: 100%; max-height: 300px; object-fit: contain; mix-blend-mode: multiply; }
+		.modal-copy { position: relative; padding: 35px; }
+		.close-button { position: absolute; top: 15px; right: 17px; border: 0; background: transparent; color: var(--muted); font-size: 22px; }
+		.modal-copy h2 { margin: 8px 0 16px; font-family: 'Playfair Display', Georgia, serif; font-size: 29px; line-height: 1.08; }
+		.modal-copy p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+		.modal-price { margin: 25px 0 15px; font-size: 24px; font-weight: 700; }
+		.add-button { width: 100%; border: 0; border-radius: 6px; background: var(--coral); color: white; padding: 13px; font-weight: 700; }
+		.add-button:hover { background: #c9674f; }
+		@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+		@keyframes spin { to { transform: rotate(360deg); } }
+		@media (max-width: 1050px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+		@media (max-width: 740px) { .page-shell { padding: 0 20px 3rem; } .hero { grid-template-columns: 1fr; gap: 20px; padding: 50px 0 35px; } .hero-copy { max-width: 500px; } .toolbar { align-items: stretch; } .categories { order: 2; } .controls { width: 100%; } .search, .sort { flex: 1; width: auto; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .image-wrap { height: 190px; padding: 18px; } .product-info { padding: 13px; } .product-title { font-size: 13px; } .modal-content { grid-template-columns: 1fr; } .modal-image { min-height: 230px; } }
+		@media (max-width: 420px) { .product-grid { grid-template-columns: 1fr; } .image-wrap { height: 250px; } }
+	</style>
+</head>
+<body>
+	<div class="page-shell">
+		<header>
+			<a class="brand" href="#"><span class="brand-mark">N</span><span>NORTHSTAR MARKET</span></a>
+			<button class="cart-button" id="cart-button" type="button">Bag <span class="cart-count" id="cart-count">0</span></button>
+		</header>
+
+		<main>
+			<section class="hero">
+				<div><p class="eyebrow">The considered collection</p><h1>Good things,<br>well chosen.</h1></div>
+				<p class="hero-copy">A small edit of useful, beautiful things for the everyday. Browse the collection and find your next favorite.</p>
+			</section>
+
+			<section aria-label="Product catalog">
+				<div class="toolbar">
+					<div class="categories" id="categories"><button class="category active" data-category="all" type="button">All pieces</button></div>
+					<div class="controls"><input class="search" id="search" type="search" placeholder="Search pieces..." aria-label="Search products"><select class="sort" id="sort" aria-label="Sort products"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="rating">Top rated</option></select></div>
+				</div>
+				<div class="catalog-meta"><h2>Latest edit</h2><span id="result-count">Loading...</span></div>
+				<div class="product-grid" id="product-grid"><div class="status"><div class="spinner"></div>Gathering the collection...</div></div>
+			</section>
+		</main>
+	</div>
+
+	<dialog id="product-dialog"><div class="modal-content"><div class="modal-image"><img id="modal-image" src="" alt=""></div><div class="modal-copy"><button class="close-button" id="close-dialog" type="button" aria-label="Close">&times;</button><p class="product-category" id="modal-category"></p><h2 id="modal-title"></h2><p id="modal-description"></p><div class="modal-price" id="modal-price"></div><button class="add-button" id="add-button" type="button">Add to bag</button></div></div></dialog>
+
+	<script>
+		const API_URL = 'https://fakestoreapi.com/products';
+		const state = { products: [], category: 'all', search: '', sort: 'featured', bag: 0 };
+		const grid = document.querySelector('#product-grid');
+		const count = document.querySelector('#result-count');
+		const dialog = document.querySelector('#product-dialog');
+
+		function money(value) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value); }
+		function stars(value) { return '★ ' + Number(value).toFixed(1); }
+		function renderCategories() {
+			const categories = ['all', ...new Set(state.products.map(product => product.category))];
+			document.querySelector('#categories').innerHTML = categories.map(category => `<button class="category ${category === state.category ? 'active' : ''}" data-category="${category}" type="button">${category === 'all' ? 'All pieces' : category}</button>`).join('');
+		}
+		function visibleProducts() {
+			const search = state.search.toLowerCase();
+			const products = state.products.filter(product => (state.category === 'all' || product.category === state.category) && (product.title.toLowerCase().includes(search) || product.description.toLowerCase().includes(search)));
+			return products.sort((a, b) => state.sort === 'low' ? a.price - b.price : state.sort === 'high' ? b.price - a.price : state.sort === 'rating' ? b.rating.rate - a.rating.rate : a.id - b.id);
+		}
+		function renderProducts() {
+			const products = visibleProducts();
+			count.textContent = `${products.length} ${products.length === 1 ? 'piece' : 'pieces'}`;
+			if (!products.length) { grid.innerHTML = '<div class="status">No pieces match that search. Try a different edit.</div>'; return; }
+			grid.innerHTML = products.map((product, index) => `<article class="product-card" style="animation-delay:${index * 45}ms"><div class="image-wrap"><img src="${product.image}" alt="${product.title}" loading="lazy"></div><div class="product-info"><p class="product-category">${product.category}</p><h3 class="product-title">${product.title}</h3><div class="product-bottom"><span class="price">${money(product.price)}</span><span class="rating">${stars(product.rating.rate)}</span></div><button class="view-button" data-product="${product.id}" type="button">View details</button></div></article>`).join('');
+		}
+		function openProduct(product) {
+			document.querySelector('#modal-image').src = product.image;
+			document.querySelector('#modal-image').alt = product.title;
+			document.querySelector('#modal-category').textContent = product.category;
+			document.querySelector('#modal-title').textContent = product.title;
+			document.querySelector('#modal-description').textContent = product.description;
+			document.querySelector('#modal-price').textContent = money(product.price);
+			document.querySelector('#add-button').dataset.product = product.id;
+			dialog.showModal();
+		}
+		async function loadProducts() {
+			try {
+				const response = await fetch(API_URL);
+				if (!response.ok) throw new Error('Request failed');
+				state.products = await response.json();
+				renderCategories();
+				renderProducts();
+			} catch (error) {
+				count.textContent = 'Unable to load';
+				grid.innerHTML = '<div class="status">The collection is taking a moment. Check your connection and refresh to try again.</div>';
+			}
+		}
+		document.querySelector('#categories').addEventListener('click', event => { if (!event.target.matches('.category')) return; state.category = event.target.dataset.category; renderCategories(); renderProducts(); });
+		document.querySelector('#search').addEventListener('input', event => { state.search = event.target.value; renderProducts(); });
+		document.querySelector('#sort').addEventListener('change', event => { state.sort = event.target.value; renderProducts(); });
+		grid.addEventListener('click', event => { const button = event.target.closest('[data-product]'); if (button) openProduct(state.products.find(product => product.id === Number(button.dataset.product))); });
+		document.querySelector('#close-dialog').addEventListener('click', () => dialog.close());
+		dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+		document.querySelector('#add-button').addEventListener('click', event => { state.bag += 1; document.querySelector('#cart-count').textContent = state.bag; event.target.textContent = 'Added to bag'; setTimeout(() => { event.target.textContent = 'Add to bag'; }, 1200); });
+		document.querySelector('#cart-button').addEventListener('click', () => alert(state.bag ? `Your bag has ${state.bag} ${state.bag === 1 ? 'piece' : 'pieces'}.` : 'Your bag is empty.'));
+		loadProducts();
+	</script>
+</body>
+</html>
